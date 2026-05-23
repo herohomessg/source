@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard — Members Area</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- ============================================================
+       FIREBASE CONFIG — MUST MATCH index.html EXACTLY
+       Replace all values below with your own Firebase project config
+       ============================================================ -->
+  <script type="module">
+    import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey:            "YOUR_API_KEY",
+      authDomain:        "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId:         "YOUR_PROJECT_ID",
+      storageBucket:     "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId:             "YOUR_APP_ID"
+    };
+
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) { window.location.href = "index.html"; return; }
+      document.body.classList.add("ready");
+      const name = user.displayName || user.email.split("@")[0];
+      document.getElementById("userName").textContent  = name;
+      document.getElementById("userEmail").textContent = user.email;
+      document.getElementById("greeting").textContent  = `Hello, ${name}.`;
+      document.getElementById("lastLogin").textContent =
+        user.metadata.lastSignInTime ? new Date(user.metadata.lastSignInTime).toLocaleString() : "—";
+      document.getElementById("createdAt").textContent =
+        user.metadata.creationTime   ? new Date(user.metadata.creationTime).toLocaleDateString() : "—";
+    });
+
+    document.getElementById("signOutBtn").addEventListener("click", async () => {
+      await signOut(auth);
+      window.location.href = "index.html";
+    });
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:      #1a1612;
+      --cream:    #faf7f2;
+      --gold:     #c9a84c;
+      --gold-deep:#a07828;
+      --muted:    #7a6e62;
+      --border:   #ddd5c4;
+      --green:    #3a7d5a;
+      --bg-card:  #ffffff;
+    }
+
+    html, body { min-height: 100%; font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); }
+
+    body::before {
+      content: ''; position: fixed; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 50% at 5% 10%,  rgba(201,168,76,.07) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 70% at 95% 90%, rgba(58,125,90,.05)  0%, transparent 60%);
+    }
+
+    body:not(.ready) .protected { visibility: hidden; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2rem;
+      background: rgba(250,247,242,.92);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      animation: slideDown .4s ease both;
+    }
+    @keyframes slideDown { from { opacity:0; transform:translateY(-12px); } to { opacity:1; transform:translateY(0); } }
+
+    .nav-brand { display: flex; align-items: center; gap: .6rem; }
+    .nav-brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+    .nav-brand span { font-family: 'DM Serif Display', serif; font-size: 1.1rem; }
+    .nav-right { display: flex; align-items: center; gap: 1.25rem; }
+    #userName { font-size: .85rem; color: var(--muted); }
+    #signOutBtn {
+      font-family: 'DM Sans', sans-serif; font-size: .78rem; font-weight: 500;
+      letter-spacing: .07em; text-transform: uppercase;
+      color: var(--ink); background: none; border: 1px solid var(--border);
+      border-radius: 3px; padding: .4rem .85rem; cursor: pointer; transition: background .2s, border-color .2s;
+    }
+    #signOutBtn:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+
+    /* ── MAIN ── */
+    main { max-width: 960px; margin: 0 auto; padding: 2.5rem 2rem 5rem; animation: rise .5s .1s ease both; }
+    @keyframes rise { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+    /* ── HERO ── */
+    .hero {
+      display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap;
+      gap: 1.25rem; margin-bottom: 2rem; padding-bottom: 1.75rem; border-bottom: 1px solid var(--border);
+    }
+    .hero-text .eyebrow {
+      font-size: .72rem; font-weight: 500; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--gold-deep); margin-bottom: .5rem;
+    }
+    #greeting { font-family: 'DM Serif Display', serif; font-size: 2.2rem; line-height: 1.15; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: .4rem; white-space: nowrap;
+      font-size: .73rem; font-weight: 500; letter-spacing: .08em; text-transform: uppercase;
+      color: var(--green); background: rgba(58,125,90,.09); border: 1px solid rgba(58,125,90,.25);
+      border-radius: 99px; padding: .4rem 1rem;
+    }
+    .hero-badge::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--green); }
+
+    /* ── STATS ── */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px,1fr)); gap: 1rem; margin-bottom: 2.5rem; }
+    .stat-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px;
+      padding: 1.25rem 1.1rem; position: relative; overflow: hidden; transition: box-shadow .2s, transform .2s;
+    }
+    .stat-card:hover { box-shadow: 0 4px 20px rgba(26,22,18,.08); transform: translateY(-2px); }
+    .stat-card::after { content:''; position:absolute; top:0; left:0; width:3px; height:100%; background:var(--gold); border-radius:4px 0 0 4px; }
+    .stat-label { font-size:.7rem; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin-bottom:.4rem; }
+    .stat-value { font-family:'DM Serif Display',serif; font-size:.95rem; color:var(--ink); line-height:1.3; word-break:break-all; }
+
+    /* ── TAB BAR ── */
+    .tab-bar {
+      display: flex; margin-bottom: 0;
+      border-bottom: 2px solid var(--border);
+      overflow-x: auto; scrollbar-width: none;
+    }
+    .tab-bar::-webkit-scrollbar { display: none; }
+    .tab-btn {
+      flex-shrink: 0; padding: .75rem 1.25rem;
+      font-family: 'DM Sans', sans-serif; font-size: .82rem; font-weight: 500;
+      letter-spacing: .05em; text-transform: uppercase; white-space: nowrap;
+      color: var(--muted); background: none; border: none; border-bottom: 2px solid transparent;
+      margin-bottom: -2px; cursor: pointer; transition: color .2s, border-color .2s;
+    }
+    .tab-btn:hover { color: var(--ink); }
+    .tab-btn.active { color: var(--ink); border-bottom-color: var(--gold); }
+
+    /* ── TAB PANELS ── */
+    .tab-panel { display: none; padding-top: 2rem; }
+    .tab-panel.active { display: block; }
+
+    /* ── ACCORDION ── */
+    .accordion { display: flex; flex-direction: column; gap: .6rem; }
+
+    .acc-item {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
+    }
+
+    .acc-trigger {
+      width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+      padding: 1rem 1.25rem; cursor: pointer; background: none; border: none;
+      font-family: 'DM Sans', sans-serif; font-size: .92rem; font-weight: 500; color: var(--ink);
+      text-align: left; transition: background .15s;
+    }
+    .acc-trigger:hover { background: rgba(201,168,76,.05); }
+    .acc-trigger.open { background: rgba(201,168,76,.07); }
+
+    .acc-icon {
+      flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%;
+      background: var(--gold); display: flex; align-items: center; justify-content: center;
+      transition: transform .25s;
+    }
+    .acc-icon svg { width: 10px; height: 10px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .acc-trigger.open .acc-icon { transform: rotate(180deg); }
+
+    .acc-body { max-height: 0; overflow: hidden; transition: max-height .35s ease; }
+    .acc-body.open { border-top: 1px solid var(--border); }
+
+    .acc-inner { padding: 1rem 1.25rem 1.25rem; }
+
+    /* password badge */
+    .pw-note {
+      display: inline-flex; align-items: center; gap: .4rem;
+      font-size: .74rem; color: var(--gold-deep);
+      background: rgba(201,168,76,.1); border: 1px solid rgba(201,168,76,.3);
+      border-radius: 3px; padding: .3rem .7rem; margin-bottom: 1rem;
+    }
+    .pw-note::before { content: '🔑'; font-size: .8rem; }
+
+    /* link list */
+    .link-list { list-style: none; display: flex; flex-direction: column; gap: .45rem; }
+    .link-list li { display: flex; align-items: flex-start; gap: .6rem; }
+    .link-list li::before { content: '→'; color: var(--gold); font-size: .8rem; flex-shrink: 0; margin-top: .15rem; }
+    .link-list a {
+      font-size: .88rem; color: var(--ink); text-decoration: none;
+      border-bottom: 1px solid var(--border); padding-bottom: 1px;
+      transition: color .15s, border-color .15s; line-height: 1.5;
+    }
+    .link-list a:hover { color: var(--gold-deep); border-color: var(--gold); }
+    .link-note { font-size: .78rem; color: var(--muted); margin-left: .2rem; }
+
+    /* sub-group label */
+    .sub-label {
+      font-size: .7rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+      color: var(--muted); margin: 1rem 0 .5rem; padding-bottom: .3rem;
+      border-bottom: 1px dashed var(--border);
+    }
+    .sub-label:first-child { margin-top: 0; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      nav  { padding: .85rem 1.25rem; }
+      main { padding: 1.75rem 1.25rem 4rem; }
+      #greeting { font-size: 1.8rem; }
+      .tab-btn { padding: .65rem .9rem; font-size: .76rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="protected">
+    <div class="nav-brand">
+      <div class="dot"></div>
+      <span>Members Area</span>
+    </div>
+    <div class="nav-right">
+      <span id="userName">…</span>
+      <button id="signOutBtn">Sign Out</button>
+    </div>
+  </nav>
+
+  <!-- DASHBOARD -->
+  <main class="protected">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-text">
+        <p class="eyebrow">Dashboard</p>
+        <h1 id="greeting">Hello.</h1>
+      </div>
+      <div class="hero-badge">Authenticated &amp; Verified</div>
+    </div>
+
+    <!-- Account stats -->
+    <div class="stats">
+      <div class="stat-card">
+        <p class="stat-label">Email</p>
+        <p class="stat-value" id="userEmail">—</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Last Sign-In</p>
+        <p class="stat-value" id="lastLogin">—</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Member Since</p>
+        <p class="stat-value" id="createdAt">—</p>
+      </div>
+    </div>
+
+    <!-- TAB BAR -->
+    <div class="tab-bar" role="tablist">
+      <button class="tab-btn active" role="tab" data-tab="resources">
+        📹 Videos, Calculators &amp; Slides
+      </button>
+      <!-- Future tabs go here -->
+    </div>
+
+    <!-- TAB: Videos, Calculators & Slides -->
+    <div class="tab-panel active" id="tab-resources">
+      <div class="accordion">
+
+        <!-- 1 ─ Matt Lam Training Videos -->
+        <div class="acc-item">
+          <button class="acc-trigger" aria-expanded="false">
+            <span>Matt Lam Training Videos</span>
+            <span class="acc-icon"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></span>
+          </button>
+          <div class="acc-body">
+            <div class="acc-inner">
+              <div class="pw-note">Password: mattlamadvisory</div>
+              <ul class="link-list">
+                <li><a href="https://mattlamadvisory.org/fullaccount" target="_blank" rel="noopener">#MattLamAdvisory Dropbox — Everything in Links</a></li>
+                <li><a href="https://mattlamadvisory.org/essenslides" target="_blank" rel="noopener">Essentials Slides</a></li>
+                <li><a href="https://mattlamadvisory.org/essvids" target="_blank" rel="noopener">Essentials Training Videos</a></li>
+                <li><a href="https://mattlamadvisory.org/essboosters" target="_blank" rel="noopener">Essentials Boosters</a></li>
+                <li><a href="https://mattlamadvisory.org/starsprogr" target="_blank" rel="noopener">STARS Program <span class="link-note">(some links dead — refer to different batch link/passwords)</span></a></li>
+                <li><a href="https://mattlamadvisory.org/orientationforms" target="_blank" rel="noopener">Orientation &amp; Forms</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2 ─ Herohomes HDB to PTE Essentials -->
+        <div class="acc-item">
+          <button class="acc-trigger" aria-expanded="false">
+            <span>Herohomes HDB to PTE Essentials</span>
+            <span class="acc-icon"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></span>
+          </button>
+          <div class="acc-body">
+            <div class="acc-inner">
+              <ul class="link-list">
+                <li><a href="https://docs.google.com/presentation/d/1xntT6FSo9MBB32UX_3uaBxEWXfgTvMZB/edit?usp=sharing&ouid=102352392372436834386&rtpof=true&sd=true" target="_blank" rel="noopener">Herohomes Essentials (Q4 2025)</a></li>
+                <li><a href="https://www.loom.com/share/14793a41f0e04c9a94cf3d8afd4a6e8a" target="_blank" rel="noopener">Herohomes Essentials Recording (Loom) <span class="link-note">— watch on desktop for chapter links</span></a></li>
+                <li><a href="https://youtu.be/K_aI9JPe5a8" target="_blank" rel="noopener">Discussion with Future Upgrader</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3 ─ Herohomes Upgrader Calculator -->
+        <div class="acc-item">
+          <button class="acc-trigger" aria-expanded="false">
+            <span>Herohomes Upgrader Calculator</span>
+            <span class="acc-icon"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></span>
+          </button>
+          <div class="acc-body">
+            <div class="acc-inner">
+              <ul class="link-list">
+                <li><a href="https://docs.google.com/spreadsheets/d/1J5sy771dc5bH1gmRnD2s7mU5da29wdDWl6jquGlT1Fo/edit?usp=sharing" target="_blank" rel="noopener">[Jan 2026] Herohomes Asset Planning 5.1</a></li>
+                <li><a href="https://www.loom.com/share/22bfa3da01794021822b2a494c6e4a50" target="_blank" rel="noopener">Video Guide for Calculator — Calculations</a></li>
+                <li><a href="https://www.loom.com/share/80f9a4f989a649fbabd6e83ea3ef4925" target="_blank" rel="noopener">Video Guide for Calculator — Timeline</a></li>
+                <li><a href="https://herohomes.sg/wp-content/uploads/2025/08/TIMELINE-PLANNING-V2.xlsx" target="_blank" rel="noopener">[Aug 2025] Excel Timeline Calculator by Khairy</a></li>
+                <li><a href="https://docs.google.com/spreadsheets/d/1cE2Vo276lhi8RoztnUZcyyiSjyBusJwCmW971iXALjA/edit#gid=0" target="_blank" rel="noopener">[2024] Herohomes First Time Buyers Calculator</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 ─ Clinton Lim Training Videos -->
+        <div class="acc-item">
+          <button class="acc-trigger" aria-expanded="false">
+            <span>Clinton Lim Training Videos</span>
+            <span class="acc-icon"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></span>
+          </button>
+          <div class="acc-body">
+            <div class="acc-inner">
+
+              <p class="sub-label">August 2025 — Training Docs</p>
+              <ul class="link-list">
+                <li><a href="https://docs.google.com/document/d/1CHlvBp6pQX4afnT9vpwzaPphHRlOop7njVQki-UnPuo/edit?usp=sharing" target="_blank" rel="noopener">Clinton Training Pt 1</a></li>
+                <li><a href="https://docs.google.com/document/d/1Yn3FmuyYy2G0ha9bCRYGbQ5Nqoh9kCsd4GLH-TESNCU/edit?usp=sharing" target="_blank" rel="noopener">Clinton Training Pt 2</a></li>
+                <li><a href="https://docs.google.com/document/d/1069axpnaQN40W9Deb3Lua8piFKJrMkM2S7W-5SgjB-4/edit?usp=sharing" target="_blank" rel="noopener">Clinton Training Pt 3</a></li>
+              </ul>
+
+              <p class="sub-label">YouTube Series</p>
+              <ul class="link-list">
+                <li><a href="https://youtu.be/8fgfq59npbs" target="_blank" rel="noopener">Essence of HDB Asset Progression: A Guide for Agents</a></li>
+                <li><a href="https://youtu.be/hQbdg_z0m0o" target="_blank" rel="noopener">Mastering the Buy &amp; Sell Timeline: Key Tips for PTE Transactions</a></li>
+                <li><a href="https://youtu.be/hxz7YoxJnik" target="_blank" rel="noopener">Cash Flow Comparison: Resale vs New Launch</a></li>
+                <li><a href="https://youtu.be/cTt4mhAGlPM" target="_blank" rel="noopener">New Launch vs Newly TOP Projects: Real-Life Comparison</a></li>
+                <li><a href="https://youtu.be/ESH2WJjIboE" target="_blank" rel="noopener">Why New Launch Properties Are a Safer Bet Than Resale</a></li>
+              </ul>
+
+              <p class="sub-label">Division Huddles &amp; Crossovers</p>
+              <ul class="link-list">
+                <li><a href="https://youtu.be/OjQnO4TvFfg" target="_blank" rel="noopener">Feb 2025: Division Huddle 1 — Client Presentation Flow</a></li>
+                <li><a href="https://youtu.be/f9WLJ4KpnQk" target="_blank" rel="noopener">Mar 2025: Alvin Chin × Clinton Lim — MOP Upgrader Waves &amp; Condo Trends</a></li>
+                <li><a href="https://youtu.be/tD0NdTJbyFE" target="_blank" rel="noopener">Mar 2025: Alvin Chin × Clinton Lim — The Best Is Yet To Come</a></li>
+              </ul>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- 5 ─ CRT Recordings -->
+        <div class="acc-item">
+          <button class="acc-trigger" aria-expanded="false">
+            <span>CRT Recordings</span>
+            <span class="acc-icon"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></span>
+          </button>
+          <div class="acc-body">
+            <div class="acc-inner">
+
+              <p class="sub-label">2024 CRT 11 — How Adee Uses QPE to Help Clients Choose Best Units</p>
+              <ul class="link-list">
+                <li><a href="https://www.youtube.com/watch?v=bYznFjP2L28" target="_blank" rel="noopener">Video Recording</a></li>
+              </ul>
+
+              <p class="sub-label">2025 CRT 11 Nov — Investing in Stocks &amp; Digital Marketing</p>
+              <ul class="link-list">
+                <li><a href="https://www.youtube.com/watch?v=GzWOAJhDeXg" target="_blank" rel="noopener">Video Recording 1</a></li>
+                <li><a href="https://www.youtube.com/watch?v=FwuUILkdtwU" target="_blank" rel="noopener">Video Recording 2</a></li>
+                <li><a href="https://www.youtube.com/watch?v=_nwJ2dK8xnA" target="_blank" rel="noopener">Video Recording 3</a></li>
+                <li><a href="https://www.youtube.com/watch?v=KPy6qyZxEmI" target="_blank" rel="noopener">Video Recording 4</a></li>
+                <li><a href="https://www.youtube.com/watch?v=1sehV8tr660" target="_blank" rel="noopener">Video Recording 5</a></li>
+              </ul>
+
+              <p class="sub-label">2025 CRT 10 Oct — Mastering Club 55 Cases</p>
+              <ul class="link-list">
+                <li><a href="https://www.youtube.com/watch?v=VGluPNPEFEg" target="_blank" rel="noopener">Video Recording 1</a></li>
+                <li><a href="https://www.youtube.com/watch?v=hOkTXz4NKPM" target="_blank" rel="noopener">Video Recording 2</a></li>
+              </ul>
+
+              <p class="sub-label">2025 CRT 5 Apr (Pt 2) — Advanced Conversion Tactics, Risk Framing &amp; $2 Option Fee</p>
+              <ul class="link-list">
+                <li><a href="https://youtu.be/YIOO3ChoK_Y" target="_blank" rel="noopener">Video Recording</a></li>
+                <li><a href="https://docs.google.com/document/d/1uWMq87JztsYk2Kt2FINMuwMdudCH_CpgbryJN2YCYlE/edit?usp=drive_link" target="_blank" rel="noopener">Advance Selling Technique Doc</a></li>
+              </ul>
+
+              <p class="sub-label">2025 CRT 5 Apr (Pt 1) — Mastering Soft Skills &amp; Buyer-to-Seller Conversions</p>
+              <ul class="link-list">
+                <li><a href="https://youtu.be/uC3QsQ-WfKY" target="_blank" rel="noopener">Video Recording</a></li>
+                <li><a href="https://docs.google.com/document/d/1uWMq87JztsYk2Kt2FINMuwMdudCH_CpgbryJN2YCYlE/edit?usp=drive_link" target="_blank" rel="noopener">Advance Selling Technique Doc</a></li>
+              </ul>
+
+              <p class="sub-label">2024 Q4 Masterclass for New Agents — Future of HDB</p>
+              <ul class="link-list">
+                <li><a href="https://youtu.be/Kszma1f58UQ" target="_blank" rel="noopener">Video Recording</a></li>
+              </ul>
+
+              <p class="sub-label">2024 Q4 — QPE &amp; Art of Serving Buyers</p>
+              <ul class="link-list">
+                <li><a href="https://youtu.be/XJeKzlujFN8" target="_blank" rel="noopener">Video Recording</a></li>
+              </ul>
+
+              <p class="sub-label">2024 CRT 4 — Door Knock King</p>
+              <ul class="link-list">
+                <li><a href="https://propnex.zoom.us/rec/share/IIn11UBdjuNzsK9KlkN5HN3vaUdj8AfL816Yx-n3_UlRkQaR7aFh_XWV1nGzx0E.M1X1kQyBILlvYHMg" target="_blank" rel="noopener">Video Recording</a></li>
+                <li><a href="https://docs.google.com/presentation/d/1ypCbxVs2rL7Lxzkkz-V9BzAD52NcoZTB/edit#slide=id.g26909980269_0_5" target="_blank" rel="noopener">PowerPoint Slides</a></li>
+              </ul>
+
+              <p class="sub-label">2024 CRT 3 — Direct Buyer Swinging</p>
+              <ul class="link-list">
+                <li><a href="https://propnex.zoom.us/rec/play/EH4L8TW88nxeK0PPrfRxOPnrIoUfbyMCpSB1AF32Kvf4HTh5odqe1KYZ7WHwMhhn6SjbkjGV2yXFpBEr.V-bW-EDANlgV2HBB?canPlayFromShare=true&from=my_recording&startTime=1713251845000&componentName=rec-play&originRequestUrl=https%3A%2F%2Fpropnex.zoom.us%2Frec%2Fshare%2FHthXPqMwOjDy509T9OD23QecLlXWDM4v1b-kkQJR3akuiKYnpTC_v5BL_yY-2Dod.msVehjrqwArw0n3C%3FstartTime%3D1713251845000" target="_blank" rel="noopener">Video Recording</a></li>
+                <li><a href="https://docs.google.com/presentation/d/1-Giae0O20RbTRzU9WXl_5m3bVvRtd3DD/edit?usp=sharing&ouid=102352392372436834386&rtpof=true&sd=true" target="_blank" rel="noopener">PowerPoint Slides</a></li>
+              </ul>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- 6 ─ Marketing Principles -->
+        <div class="acc-item">
+          <button class="acc-trigger" aria-expanded="false">
+            <span>Marketing Principles</span>
+            <span class="acc-icon"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></span>
+          </button>
+          <div class="acc-body">
+            <div class="acc-inner">
+              <ul class="link-list">
+                <li><a href="https://herohomes.sg/wp-content/uploads/2024/05/TheBrainAudit.epub_.pdf" target="_blank" rel="noopener">Brain Audit Book (PDF)</a></li>
+                <li><a href="https://docs.google.com/document/d/1ipuv_8DdjUm3PrvEEGyuO5_2uO0WoEBA-aZnBrqfG5c/edit?usp=sharing" target="_blank" rel="noopener">Create Viral Hooks</a></li>
+                <li><a href="https://docs.google.com/document/d/10SYZuRittA7U5291ZBbOEGCXrxzWUoDIfDF-gVkXeI8/edit?usp=sharing" target="_blank" rel="noopener">Create Your Business One-Liner</a></li>
+                <li><a href="https://docs.google.com/document/d/1uWMq87JztsYk2Kt2FINMuwMdudCH_CpgbryJN2YCYlE/edit?usp=drive_link" target="_blank" rel="noopener">May 2025: Advance Selling Techniques Notes</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7 ─ Video Ideas -->
+        <div class="acc-item">
+          <button class="acc-trigger" aria-expanded="false">
+            <span>Video Ideas</span>
+            <span class="acc-icon"><svg viewBox="0 0 12 12"><polyline points="2,4 6,8 10,4"/></svg></span>
+          </button>
+          <div class="acc-body">
+            <div class="acc-inner">
+              <ul class="link-list">
+                <li><a href="https://docs.google.com/document/d/1TcP1L9zR6_3faKU21GbOAbXFJoNpXg5w6u03HZ-zK3c/edit?usp=sharing" target="_blank" rel="noopener">Short Videos Compilation</a></li>
+                <li><a href="https://docs.google.com/document/d/1GeNnr1jZa_1vlt4JmKDfm6BXDXepKqsbOZHE3k6kgV8/edit?usp=sharing" target="_blank" rel="noopener">GE 2025 Content Discussion (Evergreen)</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /accordion -->
+    </div><!-- /tab-panel -->
+
+  </main>
+
+  <script>
+    /* ── Accordion ── */
+    document.querySelectorAll('.acc-trigger').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const body   = btn.nextElementSibling;
+        const isOpen = btn.classList.contains('open');
+
+        // Close all open panels first
+        document.querySelectorAll('.acc-trigger.open').forEach(b => {
+          b.classList.remove('open');
+          b.setAttribute('aria-expanded', 'false');
+          const bd = b.nextElementSibling;
+          bd.style.maxHeight = null;
+          bd.classList.remove('open');
+        });
+
+        // Open clicked one (if it wasn't already open)
+        if (!isOpen) {
+          btn.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+          body.classList.add('open');
+          body.style.maxHeight = body.scrollHeight + 'px';
+        }
+      });
+    });
+
+    /* ── Tabs ── */
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>
