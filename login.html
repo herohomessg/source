@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign In — Members Only</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <!-- ============================================================
+       FIREBASE CONFIG — REPLACE ALL VALUES BELOW WITH YOUR OWN
+       Get these from Firebase Console → Project Settings → Your Apps
+       ============================================================ -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey:            "AIzaSyC-k7wE7JqSNfqFOL7MLltLNUrb7hVX4CU",
+      authDomain:        "deri-project.firebaseapp.com",
+      projectId:         "deri-project",
+      storageBucket:     "deri-project.firebasestorage.app",
+      messagingSenderId: "126232357966",
+      appId:             "1:126232357966:web:d1304b0d514e8336c3271f"
+    };
+
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email    = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const btn      = document.getElementById("submitBtn");
+      const errBox   = document.getElementById("errorMsg");
+
+      errBox.textContent = "";
+      btn.disabled = true;
+      btn.textContent = "Signing in…";
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "dashboard.html";
+      } catch (err) {
+        const messages = {
+          "auth/user-not-found":   "No account found with that email.",
+          "auth/wrong-password":   "Incorrect password. Please try again.",
+          "auth/invalid-email":    "Please enter a valid email address.",
+          "auth/too-many-requests":"Too many attempts. Please wait and try again.",
+          "auth/invalid-credential": "Invalid email or password."
+        };
+        errBox.textContent = messages[err.code] || "Sign-in failed. Please try again.";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Sign In";
+      }
+    });
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:      #1a1612;
+      --parchment:#f5f0e8;
+      --cream:    #faf7f2;
+      --gold:     #c9a84c;
+      --gold-deep:#a07828;
+      --rust:     #b84a2e;
+      --muted:    #7a6e62;
+      --border:   #ddd5c4;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+    }
+
+    /* ── Decorative background ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 10% 20%, rgba(201,168,76,.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 90% 80%, rgba(184,74,46,.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* ── Corner ornaments ── */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 20px; left: 20px;
+      width: 80px; height: 80px;
+      border-top: 2px solid var(--gold);
+      border-left: 2px solid var(--gold);
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    .corner-br {
+      position: fixed;
+      bottom: 20px; right: 20px;
+      width: 80px; height: 80px;
+      border-bottom: 2px solid var(--gold);
+      border-right: 2px solid var(--gold);
+      opacity: .4;
+      pointer-events: none;
+    }
+
+    /* ── Layout ── */
+    .page {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 3rem 2.5rem 2.5rem;
+      box-shadow: 0 2px 8px rgba(26,22,18,.06), 0 20px 60px rgba(26,22,18,.08);
+      animation: rise .5s ease both;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Header ── */
+    .badge {
+      display: inline-block;
+      font-size: .65rem;
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--gold-deep);
+      border: 1px solid var(--gold);
+      border-radius: 2px;
+      padding: .3em .75em;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      line-height: 1.15;
+      color: var(--ink);
+      margin-bottom: .5rem;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--gold-deep);
+    }
+
+    .subtitle {
+      font-size: .85rem;
+      color: var(--muted);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      margin-bottom: 2rem;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+    .divider span {
+      font-size: .7rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ── Form ── */
+    .field {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-size: .78rem;
+      font-weight: 500;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: .45rem;
+    }
+
+    input {
+      width: 100%;
+      padding: .75rem 1rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .95rem;
+      color: var(--ink);
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201,168,76,.12);
+      background: #fff;
+    }
+
+    /* ── Error ── */
+    #errorMsg {
+      font-size: .82rem;
+      color: var(--rust);
+      background: rgba(184,74,46,.07);
+      border: 1px solid rgba(184,74,46,.2);
+      border-radius: 3px;
+      padding: .6rem .85rem;
+      margin-bottom: 1.25rem;
+      display: none;
+    }
+    #errorMsg:not(:empty) { display: block; }
+
+    /* ── Submit button ── */
+    button[type="submit"] {
+      width: 100%;
+      padding: .85rem;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem;
+      font-weight: 500;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: #fff;
+      background: var(--ink);
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+      margin-top: .25rem;
+    }
+
+    button[type="submit"]:hover:not(:disabled) {
+      background: #2e2820;
+    }
+
+    button[type="submit"]:active:not(:disabled) {
+      transform: scale(.99);
+    }
+
+    button[type="submit"]:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    /* ── Footer note ── */
+    .footer-note {
+      margin-top: 1.75rem;
+      text-align: center;
+      font-size: .78rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .footer-note strong {
+      color: var(--ink);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      .card { padding: 2rem 1.5rem; }
+      h1 { font-size: 1.65rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="corner-br" aria-hidden="true"></div>
+
+  <main class="page">
+    <div class="card" role="main">
+
+      <span class="badge">Members Only</span>
+
+      <h1>Welcome<br><em>back.</em></h1>
+      <p class="subtitle">This site is private. Sign in with your invited account to continue.</p>
+
+      <div class="divider"><span>Sign In</span></div>
+
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label for="email">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+          />
+        </div>
+
+        <p id="errorMsg" role="alert" aria-live="polite"></p>
+
+        <button type="submit" id="submitBtn">Sign In</button>
+      </form>
+
+      <p class="footer-note">
+        Don't have access? <strong>Contact the site administrator</strong><br>
+        to request an invitation.
+      </p>
+
+    </div>
+  </main>
+
+</body>
+</html>
