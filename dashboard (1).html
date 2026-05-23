@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Herohomes Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #1a3c5e;
+      --primary-light: #2563a8;
+      --accent: #e8a020;
+      --accent-light: #f5c842;
+      --bg: #f4f6f9;
+      --card-bg: #ffffff;
+      --text: #1e2d3d;
+      --text-muted: #6b7c93;
+      --border: #dde3ec;
+      --tag-bg: #eef2ff;
+      --tag-text: #3b5bdb;
+      --shadow: 0 2px 12px rgba(26,60,94,0.08);
+      --radius: 12px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ─── HEADER ─── */
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-mark {
+      width: 36px;
+      height: 36px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 18px;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .header-title {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .header-subtitle {
+      font-size: 11px;
+      opacity: 0.65;
+      margin-top: 1px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #welcome-name {
+      font-size: 13px;
+      opacity: 0.8;
+      display: none;
+    }
+
+    @media (min-width: 480px) {
+      #welcome-name { display: block; }
+    }
+
+    .logout-btn {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.25);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-weight: 500;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.25);
+    }
+
+    /* ─── TABS ─── */
+    .tabs-wrapper {
+      background: var(--primary);
+      padding: 0 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .tabs-wrapper::-webkit-scrollbar { display: none; }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.6);
+      padding: 12px 16px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      color: var(--accent-light);
+      border-bottom-color: var(--accent-light);
+    }
+
+    .tab-btn:hover:not(.active) {
+      color: rgba(255,255,255,0.85);
+    }
+
+    /* ─── MAIN CONTENT ─── */
+    main {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 24px 16px 60px;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    /* ─── SECTION CARDS ─── */
+    .section-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      cursor: pointer;
+      user-select: none;
+      gap: 12px;
+    }
+
+    .section-header:hover {
+      background: #f8fafc;
+    }
+
+    .section-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .section-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 650;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .section-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .badge {
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 20px;
+      flex-shrink: 0;
+    }
+
+    .chevron {
+      color: var(--text-muted);
+      font-size: 12px;
+      transition: transform 0.25s;
+      flex-shrink: 0;
+    }
+
+    .section-card.open .chevron {
+      transform: rotate(180deg);
+    }
+
+    .section-body {
+      display: none;
+      padding: 0 20px 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .section-card.open .section-body {
+      display: block;
+    }
+
+    /* Password note */
+    .pw-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fff8e1;
+      border: 1px solid #ffe082;
+      color: #7a5700;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 6px;
+      margin: 12px 0 6px;
+    }
+
+    /* Sub-sections */
+    .sub-section {
+      margin-top: 14px;
+    }
+
+    .sub-section-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Link list */
+    .link-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .link-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--text);
+      font-size: 13.5px;
+      font-weight: 500;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      transition: all 0.15s;
+      line-height: 1.4;
+    }
+
+    .link-item:hover {
+      background: var(--tag-bg);
+      border-color: #c5d3f8;
+      color: var(--primary-light);
+      transform: translateX(2px);
+    }
+
+    .link-icon {
+      font-size: 15px;
+      flex-shrink: 0;
+      width: 22px;
+      text-align: center;
+    }
+
+    .link-label {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .link-tag {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+
+    .tag-video { background: #fce4e4; color: #c0392b; }
+    .tag-slides { background: #e8f4fd; color: #1a6fa8; }
+    .tag-doc { background: #e8f8f0; color: #1a7a42; }
+    .tag-calc { background: #fef9e7; color: #7a5700; }
+    .tag-loom { background: #f0e8ff; color: #5c2d9e; }
+    .tag-excel { background: #e8f8f0; color: #1a6b3a; }
+    .tag-pdf { background: #fce4e4; color: #b03020; }
+
+    /* Placeholder state */
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state .empty-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .empty-state h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .empty-state p {
+      font-size: 14px;
+    }
+
+    /* Page title */
+    .page-header {
+      margin-bottom: 20px;
+    }
+
+    .page-header h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .page-header p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Expand/Collapse all */
+    .expand-all-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 12px;
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+
+    .expand-all-btn:hover {
+      background: var(--card-bg);
+      color: var(--text);
+    }
+
+    .page-header-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+
+    /* Responsive */
+    @media (min-width: 600px) {
+      .link-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (min-width: 900px) {
+      main {
+        padding: 32px 24px 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-left">
+    <div class="logo-mark">H</div>
+    <div>
+      <div class="header-title">Herohomes</div>
+      <div class="header-subtitle">Team Resource Hub</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span id="welcome-name"></span>
+    <button class="logout-btn" onclick="logout()">Log out</button>
+  </div>
+</header>
+
+<!-- TABS NAV -->
+<div class="tabs-wrapper">
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('videos', this)">🎬 Videos, Calculators &amp; Slides</button>
+    <button class="tab-btn" onclick="switchTab('misc', this)">📁 Miscellaneous</button>
+    <button class="tab-btn" onclick="switchTab('admin', this)">⚙️ Admin</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main>
+
+  <!-- ══════════════════════════════════
+       TAB 1 — Videos, Calculators & Slides
+       ══════════════════════════════════ -->
+  <div class="tab-panel active" id="tab-videos">
+
+    <div class="page-header-row">
+      <div>
+        <h2>Videos, Calculators &amp; Slides</h2>
+        <p>Training resources, tools and recordings for the team</p>
+      </div>
+      <button class="expand-all-btn" onclick="expandAll('tab-videos')">Expand all</button>
+    </div>
+
+    <!-- ① Matt Lam Training Videos -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#fff3cd;">🎥</div>
+          <div>
+            <div class="section-title">Matt Lam Training Videos</div>
+            <div class="section-meta">Full account access · 6 links</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge">Training</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="pw-note">🔑 Password: <strong>mattlamadvisory</strong></div>
+        <div class="link-list">
+          <a class="link-item" href="https://mattlamadvisory.org/fullaccount" target="_blank">
+            <span class="link-icon">📦</span>
+            <span class="link-label">#MattLamAdvisory Dropbox — Everything in Links</span>
+          </a>
+          <a class="link-item" href="https://mattlamadvisory.org/essenslides" target="_blank">
+            <span class="link-icon">📊</span>
+            <span class="link-label">Essentials Slides</span>
+            <span class="link-tag tag-slides">Slides</span>
+          </a>
+          <a class="link-item" href="https://mattlamadvisory.org/essvids" target="_blank">
+            <span class="link-icon">🎬</span>
+            <span class="link-label">Essentials Training Videos</span>
+            <span class="link-tag tag-video">Video</span>
+          </a>
+          <a class="link-item" href="https://mattlamadvisory.org/essboosters" target="_blank">
+            <span class="link-icon">🚀</span>
+            <span class="link-label">Essentials Boosters</span>
+          </a>
+          <a class="link-item" href="https://mattlamadvisory.org/starsprogr" target="_blank">
+            <span class="link-icon">⭐</span>
+            <span class="link-label">STARS Program</span>
+            <span class="link-tag tag-video">Video</span>
+          </a>
+          <a class="link-item" href="https://mattlamadvisory.org/orientationforms" target="_blank">
+            <span class="link-icon">📋</span>
+            <span class="link-label">Orientation &amp; Forms</span>
+            <span class="link-tag tag-doc">Doc</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ② Herohomes HDB to PTE Essentials -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#e8f4fd;">🏠</div>
+          <div>
+            <div class="section-title">Herohomes HDB to PTE Essentials</div>
+            <div class="section-meta">Slides, recordings &amp; discussion · 3 links</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge">Essentials</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="link-list">
+          <a class="link-item" href="https://docs.google.com/presentation/d/1xntT6FSo9MBB32UX_3uaBxEWXfgTvMZB/edit?usp=sharing&ouid=102352392372436834386&rtpof=true&sd=true" target="_blank">
+            <span class="link-icon">📊</span>
+            <span class="link-label">Herohomes Essentials (Q4 2025)</span>
+            <span class="link-tag tag-slides">Slides</span>
+          </a>
+          <a class="link-item" href="https://www.loom.com/share/14793a41f0e04c9a94cf3d8afd4a6e8a" target="_blank">
+            <span class="link-icon">🎞️</span>
+            <span class="link-label">Essentials Recording (Loom) — watch on desktop for chapters</span>
+            <span class="link-tag tag-loom">Loom</span>
+          </a>
+          <a class="link-item" href="https://youtu.be/K_aI9JPe5a8" target="_blank">
+            <span class="link-icon">▶️</span>
+            <span class="link-label">Discussion with Future Upgrader</span>
+            <span class="link-tag tag-video">Video</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ Herohomes Upgrader Calculator -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#fef9e7;">🧮</div>
+          <div>
+            <div class="section-title">Herohomes Upgrader Calculator</div>
+            <div class="section-meta">Asset planning tools &amp; guides · 5 links</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge">Calculator</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="link-list">
+          <a class="link-item" href="https://docs.google.com/spreadsheets/d/1J5sy771dc5bH1gmRnD2s7mU5da29wdDWl6jquGlT1Fo/edit?usp=sharing" target="_blank">
+            <span class="link-icon">📈</span>
+            <span class="link-label">[Jan 2026] Herohomes Asset Planning 5.1</span>
+            <span class="link-tag tag-calc">Calc</span>
+          </a>
+          <a class="link-item" href="https://www.loom.com/share/22bfa3da01794021822b2a494c6e4a50" target="_blank">
+            <span class="link-icon">🎞️</span>
+            <span class="link-label">Video Guide — Calculations</span>
+            <span class="link-tag tag-loom">Loom</span>
+          </a>
+          <a class="link-item" href="https://www.loom.com/share/80f9a4f989a649fbabd6e83ea3ef4925" target="_blank">
+            <span class="link-icon">🎞️</span>
+            <span class="link-label">Video Guide — Timeline</span>
+            <span class="link-tag tag-loom">Loom</span>
+          </a>
+          <a class="link-item" href="https://herohomes.sg/wp-content/uploads/2025/08/TIMELINE-PLANNING-V2.xlsx" target="_blank">
+            <span class="link-icon">📗</span>
+            <span class="link-label">[Aug 2025] Excel Timeline Calculator by Khairy</span>
+            <span class="link-tag tag-excel">Excel</span>
+          </a>
+          <a class="link-item" href="https://docs.google.com/spreadsheets/d/1cE2Vo276lhi8RoztnUZcyyiSjyBusJwCmW971iXALjA/edit#gid=0" target="_blank">
+            <span class="link-icon">📊</span>
+            <span class="link-label">[2024] Herohomes First Time Buyers Calculator</span>
+            <span class="link-tag tag-calc">Calc</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ④ Clinton Lim Training Videos -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#e8f8f0;">🎓</div>
+          <div>
+            <div class="section-title">Clinton Lim Training Videos</div>
+            <div class="section-meta">Documents &amp; YouTube recordings · 11 links</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge">Training</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+
+        <div class="sub-section">
+          <div class="sub-section-title">August 2025 Training Docs</div>
+          <div class="link-list">
+            <a class="link-item" href="https://docs.google.com/document/d/1CHlvBp6pQX4afnT9vpwzaPphHRlOop7njVQki-UnPuo/edit?usp=sharing" target="_blank">
+              <span class="link-icon">📄</span>
+              <span class="link-label">August 2025: Clinton Training Pt 1</span>
+              <span class="link-tag tag-doc">Doc</span>
+            </a>
+            <a class="link-item" href="https://docs.google.com/document/d/1Yn3FmuyYy2G0ha9bCRYGbQ5Nqoh9kCsd4GLH-TESNCU/edit?usp=sharing" target="_blank">
+              <span class="link-icon">📄</span>
+              <span class="link-label">August 2025: Clinton Training Pt 2</span>
+              <span class="link-tag tag-doc">Doc</span>
+            </a>
+            <a class="link-item" href="https://docs.google.com/document/d/1069axpnaQN40W9Deb3Lua8piFKJrMkM2S7W-5SgjB-4/edit?usp=sharing" target="_blank">
+              <span class="link-icon">📄</span>
+              <span class="link-label">August 2025: Clinton Training Pt 3</span>
+              <span class="link-tag tag-doc">Doc</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-section-title">YouTube Videos</div>
+          <div class="link-list">
+            <a class="link-item" href="https://youtu.be/8fgfq59npbs" target="_blank">
+              <span class="link-icon">▶️</span>
+              <span class="link-label">Essence of HDB Asset Progression: A Guide for Agents</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+            <a class="link-item" href="https://youtu.be/hQbdg_z0m0o" target="_blank">
+              <span class="link-icon">▶️</span>
+              <span class="link-label">Mastering the Buy &amp; Sell Timeline: Key Tips for PTE Transactions</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+            <a class="link-item" href="https://youtu.be/hxz7YoxJnik" target="_blank">
+              <span class="link-icon">▶️</span>
+              <span class="link-label">Cash Flow Comparison: Resale vs New Launch</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+            <a class="link-item" href="https://youtu.be/cTt4mhAGlPM" target="_blank">
+              <span class="link-icon">▶️</span>
+              <span class="link-label">New Launch vs Newly TOP Projects: Real-Life Comparison</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+            <a class="link-item" href="https://youtu.be/ESH2WJjIboE" target="_blank">
+              <span class="link-icon">▶️</span>
+              <span class="link-label">Why New Launch Properties Are a Safer Bet Than Resale</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-section-title">Division Huddles &amp; Crossovers</div>
+          <div class="link-list">
+            <a class="link-item" href="https://youtu.be/OjQnO4TvFfg" target="_blank">
+              <span class="link-icon">▶️</span>
+              <span class="link-label">Feb 2025: Division Huddle 1 — Client Presentation Flow</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+            <a class="link-item" href="https://youtu.be/f9WLJ4KpnQk" target="_blank">
+              <span class="link-icon">▶️</span>
+              <span class="link-label">Mar 2025: Alvin Chin × Clinton Lim — MOP Upgrader Waves &amp; Condo Trends</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+            <a class="link-item" href="https://youtu.be/tD0NdTJbyFE" target="_blank">
+              <span class="link-icon">▶️</span>
+              <span class="link-label">Mar 2025: Alvin Chin × Clinton Lim — The Best Is Yet To Come</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ⑤ CRT Recordings -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#f0e8ff;">🎙️</div>
+          <div>
+            <div class="section-title">CRT Recordings</div>
+            <div class="section-meta">Masterclasses, workshops &amp; roundtable sessions · 9 sessions</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge">CRT</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+
+        <!-- 2025 CRT 11 Nov -->
+        <div class="sub-section">
+          <div class="sub-section-title">2025 CRT 11 Nov — Investing in Stocks &amp; Digital Marketing</div>
+          <div class="link-list">
+            <a class="link-item" href="https://www.youtube.com/watch?v=GzWOAJhDeXg" target="_blank">
+              <span class="link-icon">▶️</span><span class="link-label">Recording 1</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+            <a class="link-item" href="https://www.youtube.com/watch?v=FwuUILkdtwU" target="_blank">
+              <span class="link-icon">▶️</span><span class="link-label">Recording 2</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+            <a class="link-item" href="https://www.youtube.com/watch?v=_nwJ2dK8xnA" target="_blank">
+              <span class="link-icon">▶️</span><span class="link-label">Recording 3</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+            <a class="link-item" href="https://www.youtube.com/watch?v=KPy6qyZxEmI" target="_blank">
+              <span class="link-icon">▶️</span><span class="link-label">Recording 4</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+            <a class="link-item" href="https://www.youtube.com/watch?v=1sehV8tr660" target="_blank">
+              <span class="link-icon">▶️</span><span class="link-label">Recording 5</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 2025 CRT 10 Oct -->
+        <div class="sub-section">
+          <div class="sub-section-title">2025 CRT 10 Oct — Mastering Club 55 Cases</div>
+          <div class="link-list">
+            <a class="link-item" href="https://www.youtube.com/watch?v=VGluPNPEFEg" target="_blank">
+              <span class="link-icon">▶️</span><span class="link-label">Recording 1</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+            <a class="link-item" href="https://www.youtube.com/watch?v=hOkTXz4NKPM" target="_blank">
+              <span class="link-icon">▶️</span><span class="link-label">Recording 2</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 2025 CRT 5 Apr Pt2 -->
+        <div class="sub-section">
+          <div class="sub-section-title">2025 CRT 5 Apr — Advanced Conversion Tactics, Risk Framing &amp; $2 Option Fee (Pt 2)</div>
+          <div class="link-list">
+            <a class="link-item" href="https://youtu.be/YIOO3ChoK_Y" target="_blank">
+              <span class="link-icon">▶️</span><span class="link-label">Video Recording</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+            <a class="link-item" href="https://docs.google.com/document/d/1uWMq87JztsYk2Kt2FINMuwMdudCH_CpgbryJN2YCYlE/edit?usp=drive_link" target="_blank">
+              <span class="link-icon">📄</span><span class="link-label">Advance Selling Technique Doc</span>
+              <span class="link-tag tag-doc">Doc</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 2025 CRT 5 Apr Pt1 -->
+        <div class="sub-section">
+          <div class="sub-section-title">2025 CRT 5 Apr — Mastering Soft Skills &amp; Buyer-to-Seller Conversions (Pt 1)</div>
+          <div class="link-list">
+            <a class="link-item" href="https://youtu.be/uC3QsQ-WfKY" target="_blank">
+              <span class="link-icon">▶️</span><span class="link-label">Video Recording</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+            <a class="link-item" href="https://docs.google.com/document/d/1uWMq87JztsYk2Kt2FINMuwMdudCH_CpgbryJN2YCYlE/edit?usp=drive_link" target="_blank">
+              <span class="link-icon">📄</span><span class="link-label">Advance Selling Technique Doc</span>
+              <span class="link-tag tag-doc">Doc</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 2024 Q4 Masterclass -->
+        <div class="sub-section">
+          <div class="sub-section-title">2024 Q4 Masterclass for New Agents: Future of HDB</div>
+          <div class="link-list">
+            <a class="link-item" href="https://youtu.be/Kszma1f58UQ" target="_blank">
+              <span class="link-icon">▶️</span><span class="link-label">Video Recording</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 2024 Q4 QPE -->
+        <div class="sub-section">
+          <div class="sub-section-title">2024 Q4 QPE &amp; Art of Serving Buyers</div>
+          <div class="link-list">
+            <a class="link-item" href="https://youtu.be/XJeKzlujFN8" target="_blank">
+              <span class="link-icon">▶️</span><span class="link-label">Video Recording</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 2024 CRT 11 Adee -->
+        <div class="sub-section">
+          <div class="sub-section-title">2024 CRT 11 — How Adee Uses QPE to Help Clients Choose Best Units</div>
+          <div class="link-list">
+            <a class="link-item" href="https://www.youtube.com/watch?v=bYznFjP2L28" target="_blank">
+              <span class="link-icon">▶️</span><span class="link-label">Video Recording</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 2024 CRT 4 Door Knock -->
+        <div class="sub-section">
+          <div class="sub-section-title">2024 CRT 4 — Door Knock King</div>
+          <div class="link-list">
+            <a class="link-item" href="https://propnex.zoom.us/rec/share/IIn11UBdjuNzsK9KlkN5HN3vaUdj8AfL816Yx-n3_UlRkQaR7aFh_XWV1nGzx0E.M1X1kQyBILlvYHMg" target="_blank">
+              <span class="link-icon">▶️</span><span class="link-label">Video Recording (Zoom)</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+            <a class="link-item" href="https://docs.google.com/presentation/d/1ypCbxVs2rL7Lxzkkz-V9BzAD52NcoZTB/edit#slide=id.g26909980269_0_5" target="_blank">
+              <span class="link-icon">📊</span><span class="link-label">PowerPoint Slides</span>
+              <span class="link-tag tag-slides">Slides</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 2024 CRT 3 Direct Buyer -->
+        <div class="sub-section">
+          <div class="sub-section-title">2024 CRT 3 — Direct Buyer Swinging</div>
+          <div class="link-list">
+            <a class="link-item" href="https://propnex.zoom.us/rec/play/EH4L8TW88nxeK0PPrfRxOPnrIoUfbyMCpSB1AF32Kvf4HTh5odqe1KYZ7WHwMhhn6SjbkjGV2yXFpBEr.V-bW-EDANlgV2HBB?canPlayFromShare=true&from=my_recording&startTime=1713251845000&componentName=rec-play&originRequestUrl=https%3A%2F%2Fpropnex.zoom.us%2Frec%2Fshare%2FHthXPqMwOjDy509T9OD23QecLlXWDM4v1b-kkQJR3akuiKYnpTC_v5BL_yY-2Dod.msVehjrqwArw0n3C%3FstartTime%3D1713251845000" target="_blank">
+              <span class="link-icon">▶️</span><span class="link-label">Video Recording (Zoom)</span>
+              <span class="link-tag tag-video">Video</span>
+            </a>
+            <a class="link-item" href="https://docs.google.com/presentation/d/1-Giae0O20RbTRzU9WXl_5m3bVvRtd3DD/edit?usp=sharing&ouid=102352392372436834386&rtpof=true&sd=true" target="_blank">
+              <span class="link-icon">📊</span><span class="link-label">PowerPoint Slides</span>
+              <span class="link-tag tag-slides">Slides</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ⑥ Marketing Principles -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#fce4e4;">📣</div>
+          <div>
+            <div class="section-title">Marketing Principles</div>
+            <div class="section-meta">Books, frameworks &amp; technique notes · 4 links</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge">Marketing</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="link-list">
+          <a class="link-item" href="https://herohomes.sg/wp-content/uploads/2024/05/TheBrainAudit.epub_.pdf" target="_blank">
+            <span class="link-icon">📕</span>
+            <span class="link-label">Brain Audit Book</span>
+            <span class="link-tag tag-pdf">PDF</span>
+          </a>
+          <a class="link-item" href="https://docs.google.com/document/d/1ipuv_8DdjUm3PrvEEGyuO5_2uO0WoEBA-aZnBrqfG5c/edit?usp=sharing" target="_blank">
+            <span class="link-icon">🪝</span>
+            <span class="link-label">Create Viral Hooks</span>
+            <span class="link-tag tag-doc">Doc</span>
+          </a>
+          <a class="link-item" href="https://docs.google.com/document/d/10SYZuRittA7U5291ZBbOEGCXrxzWUoDIfDF-gVkXeI8/edit?usp=sharing" target="_blank">
+            <span class="link-icon">✍️</span>
+            <span class="link-label">Create Your Business One Liner</span>
+            <span class="link-tag tag-doc">Doc</span>
+          </a>
+          <a class="link-item" href="https://docs.google.com/document/d/1uWMq87JztsYk2Kt2FINMuwMdudCH_CpgbryJN2YCYlE/edit?usp=drive_link" target="_blank">
+            <span class="link-icon">📋</span>
+            <span class="link-label">May 2025: Advance Selling Techniques Notes</span>
+            <span class="link-tag tag-doc">Doc</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ⑦ Video Ideas -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#e8f8f0;">💡</div>
+          <div>
+            <div class="section-title">Video Ideas</div>
+            <div class="section-meta">Content ideas &amp; compilations · 2 links</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge">Content</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="link-list">
+          <a class="link-item" href="https://docs.google.com/document/d/1TcP1L9zR6_3faKU21GbOAbXFJoNpXg5w6u03HZ-zK3c/edit?usp=sharing" target="_blank">
+            <span class="link-icon">🎬</span>
+            <span class="link-label">Short Videos Compilation</span>
+            <span class="link-tag tag-doc">Doc</span>
+          </a>
+          <a class="link-item" href="https://docs.google.com/document/d/1GeNnr1jZa_1vlt4JmKDfm6BXDXepKqsbOZHE3k6kgV8/edit?usp=sharing" target="_blank">
+            <span class="link-icon">🗳️</span>
+            <span class="link-label">GE 2025 Content Discussion (Evergreen)</span>
+            <span class="link-tag tag-doc">Doc</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-videos -->
+
+
+  <!-- ══════════════════════════════════
+       TAB 2 — Miscellaneous
+       ══════════════════════════════════ -->
+  <div class="tab-panel" id="tab-misc">
+
+    <div class="page-header-row">
+      <div>
+        <h2>Miscellaneous</h2>
+        <p>Reference links, tools &amp; media for daily use</p>
+      </div>
+      <button class="expand-all-btn" onclick="expandAll('tab-misc')">Expand all</button>
+    </div>
+
+    <!-- Primary School Search -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#e8f4fd;">🏫</div>
+          <div>
+            <div class="section-title">Primary School Search</div>
+            <div class="section-meta">School finder &amp; P1 registration ranking · 2 links</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge">Schools</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="link-list">
+          <a class="link-item" href="https://www.moe.gov.sg/schoolfinder/" target="_blank">
+            <span class="link-icon">🔍</span>
+            <span class="link-label">School Finder (MOE)</span>
+            <span class="link-tag tag-doc">MOE</span>
+          </a>
+          <a class="link-item" href="https://www.straitstimes.com/multimedia/graphics/2022/06/primary-1-registration-school-ballot/index.html?shell" target="_blank">
+            <span class="link-icon">📊</span>
+            <span class="link-label">P1 Registration — School Ballot Ranking</span>
+            <span class="link-tag tag-doc">Ranking</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- EC MOP Dates -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#fef9e7;">🏢</div>
+          <div>
+            <div class="section-title">EC MOP Dates</div>
+            <div class="section-meta">Executive Condo resale eligibility tracker · 1 link</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge">EC</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="link-list">
+          <a class="link-item" href="https://resaleec.sg/" target="_blank">
+            <span class="link-icon">📅</span>
+            <span class="link-label">List of New Resale EC (resaleec.sg)</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- List of BTO Launches -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#e8f8f0;">🏗️</div>
+          <div>
+            <div class="section-title">List of BTO Launches</div>
+            <div class="section-meta">BTO projects, prices &amp; MOP tracker · 2 links</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge">BTO</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="link-list">
+          <a class="link-item" href="https://www.teoalida.com/singapore/btolist/" target="_blank">
+            <span class="link-icon">📋</span>
+            <span class="link-label">Full List of BTO Projects, Brochures &amp; Flat Prices</span>
+          </a>
+          <a class="link-item" href="https://www.99.co/singapore/insider/bto-projects-mop-2024-2025-near-the-mrt/" target="_blank">
+            <span class="link-icon">🚇</span>
+            <span class="link-label">BTO Projects Hitting MOP 2024/2025 — Top Picks Near MRT</span>
+            <span class="link-tag tag-doc">99.co</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Vacant House Samples -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#f0e8ff;">🏠</div>
+          <div>
+            <div class="section-title">Sample of Vacant House</div>
+            <div class="section-meta">Share with client / co-broke when nearing handover · 2 links</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge">Handover</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="link-list">
+          <a class="link-item" href="https://vt.tiktok.com/ZSFV4gKby/" target="_blank">
+            <span class="link-icon">🎵</span>
+            <span class="link-label">Vacant House Sample 1 (TikTok)</span>
+            <span class="link-tag tag-video">Video</span>
+          </a>
+          <a class="link-item" href="https://vt.tiktok.com/ZSFV4nbyN/" target="_blank">
+            <span class="link-icon">🎵</span>
+            <span class="link-label">Vacant House Sample 2 (TikTok)</span>
+            <span class="link-tag tag-video">Video</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Photos placeholder -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#fce4e4;">📸</div>
+          <div>
+            <div class="section-title">Photos</div>
+            <div class="section-meta">Coming soon</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="empty-state" style="padding:24px 0;">
+          <div class="empty-icon" style="font-size:28px;">📸</div>
+          <p style="margin-top:8px;">Photo links will be added here.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Videos placeholder -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#fff3cd;">🎬</div>
+          <div>
+            <div class="section-title">Videos</div>
+            <div class="section-meta">Coming soon</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="empty-state" style="padding:24px 0;">
+          <div class="empty-icon" style="font-size:28px;">🎬</div>
+          <p style="margin-top:8px;">Video links will be added here.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-misc -->
+
+
+  <!-- ══════════════════════════════════
+       TAB 3 — Admin
+       ══════════════════════════════════ -->
+  <div class="tab-panel" id="tab-admin">
+
+    <div class="page-header-row">
+      <div>
+        <h2>Admin</h2>
+        <p>Forms, tools &amp; operational resources</p>
+      </div>
+      <button class="expand-all-btn" onclick="expandAll('tab-admin')">Expand all</button>
+    </div>
+
+    <!-- Forms & Appeals -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#e8f4fd;">📝</div>
+          <div>
+            <div class="section-title">Forms &amp; Appeals</div>
+            <div class="section-meta">SOPs, databases &amp; submission forms · 8 links</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge">Forms</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="link-list">
+          <a class="link-item" href="https://docs.google.com/document/d/1THjlOWmt8A0C6aPB9C-5HLCAtJrPMamg/edit?usp=sharing&ouid=103096474037429249220&rtpof=true&sd=true" target="_blank">
+            <span class="link-icon">📄</span>
+            <span class="link-label">Herohomes Extension of Stay Form</span>
+            <span class="link-tag tag-doc">Doc</span>
+          </a>
+          <a class="link-item" href="https://docs.google.com/document/d/1Cuxsxybxqujcq3tVYdeFBaEig0mYocXDFSaqI68lUv0/edit?usp=sharing" target="_blank">
+            <span class="link-icon">📄</span>
+            <span class="link-label">[Aug 2025] Herohomes Sales &amp; Purchase SOP</span>
+            <span class="link-tag tag-doc">Doc</span>
+          </a>
+          <a class="link-item" href="https://docs.google.com/spreadsheets/d/16NASc96bRee7bvRtEzCNxGGJGyQKL3Lw_J9ksZhywRs/edit?usp=sharing" target="_blank">
+            <span class="link-icon">📊</span>
+            <span class="link-label">Herohomes Website Purchase — SGD 350</span>
+            <span class="link-tag tag-calc">Sheet</span>
+          </a>
+          <a class="link-item" href="https://docs.google.com/spreadsheets/d/1I1V2784TcLGRkBxF2P6KIP997QWqrXY5GoH6Oi4M4EY/edit" target="_blank">
+            <span class="link-icon">🗂️</span>
+            <span class="link-label">Vendor Database</span>
+            <span class="link-tag tag-calc">Sheet</span>
+          </a>
+          <a class="link-item" href="https://docs.google.com/document/d/1lr_2r7zZBC31TbnYg4ybEMImYHtAa5Q4ZHJhxz5vEnc/edit?usp=sharing" target="_blank">
+            <span class="link-icon">👴</span>
+            <span class="link-label">CPF Appeals for Retirees</span>
+            <span class="link-tag tag-doc">Doc</span>
+          </a>
+          <a class="link-item" href="https://forms.gle/xmufYibac7E6zTKL7" target="_blank">
+            <span class="link-icon">📋</span>
+            <span class="link-label">Herohomes Agent Feedback Form</span>
+            <span class="link-tag tag-doc">Form</span>
+          </a>
+          <a class="link-item" href="https://forms.gle/qBtE1BceHACgoTLH9" target="_blank">
+            <span class="link-icon">💰</span>
+            <span class="link-label">Advertising Subsidy Claims</span>
+            <span class="link-tag tag-doc">Form</span>
+          </a>
+          <a class="link-item" href="https://docs.google.com/spreadsheets/d/1WljY65Q2sDzohAwEBejec-DNtDLynTsGs2FNZ_aigLc/edit?usp=sharing" target="_blank">
+            <span class="link-icon">🗃️</span>
+            <span class="link-label">Sample Database — Follow Up System</span>
+            <span class="link-tag tag-calc">Sheet</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Activate/Revise CPF Monthly Payments -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#fef9e7;">💳</div>
+          <div>
+            <div class="section-title">Activate / Revise CPF Monthly Payments for Mortgage</div>
+            <div class="section-meta">Coming soon</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="empty-state" style="padding:24px 0;">
+          <div class="empty-icon" style="font-size:28px;">💳</div>
+          <p style="margin-top:8px;">Links will be added here.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Herohomes Logo & Social Media -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#fce4e4;">🎨</div>
+          <div>
+            <div class="section-title">Herohomes Logo &amp; Social Media Links</div>
+            <div class="section-meta">Brand assets, team photos &amp; listings channel · 3 links</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge">Brand</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="link-list">
+          <a class="link-item" href="https://drive.google.com/drive/folders/1dKlD6uCrVDVPscN_24aiI0PcdEntgsdX?usp=drive_link" target="_blank">
+            <span class="link-icon">🖼️</span>
+            <span class="link-label">Updated Logo (Google Drive)</span>
+            <span class="link-tag tag-doc">Drive</span>
+          </a>
+          <a class="link-item" href="https://drive.google.com/drive/folders/1T8RCXRk76dXd7t1FaZsm0eQqv14U7KDh?usp=sharing" target="_blank">
+            <span class="link-icon">📷</span>
+            <span class="link-label">2024 Team Photo (Google Drive)</span>
+            <span class="link-tag tag-doc">Drive</span>
+          </a>
+          <a class="link-item" href="https://t.me/+6whP2uKcZAxlNzll" target="_blank">
+            <span class="link-icon">📢</span>
+            <span class="link-label">Shared Property Listings (Telegram)</span>
+            <span class="link-tag tag-doc">Telegram</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inlis -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#e8f8f0;">🏛️</div>
+          <div>
+            <div class="section-title">Inlis — Get Ownership Proof</div>
+            <div class="section-meta">Official land title search · $5.25 per search · 2 links</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge">SLA</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="pw-note" style="background:#e8f8f0;border-color:#a8e0be;color:#1a5e32;">💰 Cost: <strong>$5.25 per search</strong></div>
+        <div class="link-list">
+          <a class="link-item" href="https://app.sla.gov.sg/inlis/" target="_blank">
+            <span class="link-icon">🔐</span>
+            <span class="link-label">Inlis — SLA Portal</span>
+          </a>
+          <a class="link-item" href="https://www.loom.com/share/bac431b8b1d24088b32b72dab341a3bd" target="_blank">
+            <span class="link-icon">🎞️</span>
+            <span class="link-label">Video Guide (Loom)</span>
+            <span class="link-tag tag-loom">Loom</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bankruptcy Check -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#fce4e4;">⚖️</div>
+          <div>
+            <div class="section-title">Bankruptcy Check</div>
+            <div class="section-meta">Ministry of Law insolvency search · 1 link</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge">Legal</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="link-list">
+          <a class="link-item" href="https://eservices.mlaw.gov.sg/ipto/forms/io/io-home.form" target="_blank">
+            <span class="link-icon">🔍</span>
+            <span class="link-label">Bankruptcy Search — MinLaw eServices</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- HDB Floor Plan -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#e8f4fd;">📐</div>
+          <div>
+            <div class="section-title">HDB Floor Plan</div>
+            <div class="section-meta">Purchase official residential floor plans · 1 link</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge">HDB</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="link-list">
+          <a class="link-item" href="https://services2.hdb.gov.sg/webapp/BC31ISOP2/BC31SMain" target="_blank">
+            <span class="link-icon">🏠</span>
+            <span class="link-label">Purchase of Residential Floor Plan (HDB)</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- HDB OTP Download -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#f0e8ff;">📥</div>
+          <div>
+            <div class="section-title">HDB OTP Download</div>
+            <div class="section-meta">Option To Purchase document download · 1 link</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge">HDB</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="link-list">
+          <a class="link-item" href="https://services2.hdb.gov.sg/webapp/BB24OTPDlWeb/BB24POptionToPurchase.jsp" target="_blank">
+            <span class="link-icon">📄</span>
+            <span class="link-label">Option To Purchase (OTP) Download — HDB</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tax Declaration -->
+    <div class="section-card">
+      <div class="section-header" onclick="toggleSection(this)">
+        <div class="section-header-left">
+          <div class="section-icon" style="background:#fff3cd;">🧾</div>
+          <div>
+            <div class="section-title">Basic Guide to Tax Declaration</div>
+            <div class="section-meta">IRAS declaration guide · 1 link</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="badge">IRAS</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="section-body">
+        <div class="link-list">
+          <a class="link-item" href="https://herohomes.sg/wp-content/uploads/2024/03/IRAS-Declaration.pdf" target="_blank">
+            <span class="link-icon">📕</span>
+            <span class="link-label">IRAS Declaration Guide (PDF)</span>
+            <span class="link-tag tag-pdf">PDF</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-admin -->
+
+</main>
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC-k7wE7JqSNfqFOL7MLltLNUrb7hVX4CU",
+  authDomain: "deri-project.firebaseapp.com",
+  projectId: "deri-project",
+  storageBucket: "deri-project.firebasestorage.app",
+  messagingSenderId: "126232357966",
+  appId: "1:126232357966:web:d1304b0d514e8336c3271f"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, (user) => {
+  if (!user) {
+    window.location.href = "login.html";
+  } else {
+    const name = user.displayName || user.email;
+    document.getElementById("welcome-name").textContent = name;
+  }
+});
+
+window.logout = async function () {
+  await signOut(auth);
+  window.location.href = "login.html";
+};
+
+</script>
+
+<script>
+  // Tab switching
+  function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    btn.classList.add('active');
+  }
+  window.switchTab = switchTab;
+
+  // Accordion toggle
+  function toggleSection(header) {
+    header.closest('.section-card').classList.toggle('open');
+  }
+  window.toggleSection = toggleSection;
+
+  // Expand all in current tab
+  function expandAll(tabId) {
+    const tab = document.getElementById(tabId);
+    const btn = tab.querySelector('.expand-all-btn');
+    const cards = tab.querySelectorAll('.section-card');
+    const allOpen = [...cards].every(c => c.classList.contains('open'));
+    cards.forEach(c => {
+      if (allOpen) {
+        c.classList.remove('open');
+      } else {
+        c.classList.add('open');
+      }
+    });
+    btn.textContent = allOpen ? 'Expand all' : 'Collapse all';
+  }
+  window.expandAll = expandAll;
+
+  // Open first section by default
+  document.querySelector('#tab-videos .section-card')?.classList.add('open');
+</script>
+
+</body>
+</html>
